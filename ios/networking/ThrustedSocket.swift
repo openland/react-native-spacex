@@ -22,7 +22,7 @@ class ThrustedSocket {
   private var thruster: Thruster?
   private var watchDog: WatchDogTimer?
   
-  init(url: String, timeout: Int, queue: DispatchQueue) {
+  init(url: String, mode: String, timeout: Int, queue: DispatchQueue) {
     self.queue = queue
     self.timeout = timeout
     let configs = [
@@ -30,7 +30,7 @@ class ThrustedSocket {
       ThrusterConfig(url: url, timeout: 5000),
       ThrusterConfig(url: url, timeout: 30000)
     ]
-    self.thruster = Thruster(configs: configs, onSuccess: { [weak self] (ws) -> Void in
+    self.thruster = Thruster(configs: configs, mode: mode, onSuccess: { [weak self] (ws) -> Void in
       let sself = self
       if sself != nil {
         sself!.onConnected(ws: ws)

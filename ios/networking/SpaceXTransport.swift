@@ -21,9 +21,9 @@ class SpaceXTransport {
   var onConnected: (() -> Void)?
   var onDisconnected: (() -> Void)?
   
-  init(url: String, params: [String: String?]) {
+  init(url: String, mode: String, params: [String: String?]) {
     NSLog("[SpaceX-Alloc]: init SpaceXTransportScheduler")
-    self.transport = TransportState(url: url, params: params)
+    self.transport = TransportState(url: url, mode: mode, params: params)
     self.transport.connectionCallback = { connected in
       self.queue.async {
         if self.connected != connected {

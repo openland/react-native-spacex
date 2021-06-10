@@ -21,7 +21,8 @@ const NativeGraphQL = NativeModules.RNGraphQL as {
         descriptor: string,
         endpoint: string,
         connectionParams: { [key: string]: string } | null,
-        persistenceKey: string | null
+        persistenceKey: string | null,
+        mode: string
     ) => void
     closeClient: (key: string) => void;
 
@@ -46,6 +47,7 @@ export type NativeEngineOpts = {
     transport: {
         endpoint: string;
         connectionParams?: any;
+        mode: 'transport-ws' | 'openland';
     };
     persistence?: {
         key: string;
@@ -97,7 +99,8 @@ export class NativeEngine extends GraphqlBridgedEngine {
             JSON.stringify(opts.definitions),
             opts.transport.endpoint,
             opts.transport.connectionParams ? opts.transport.connectionParams : null,
-            opts.persistence ? opts.persistence.key : null
+            opts.persistence ? opts.persistence.key : null,
+            opts.transport.mode
         );
     }
 

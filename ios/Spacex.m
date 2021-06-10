@@ -10,7 +10,7 @@
 #import <React/RCTEventEmitter.h>
 
 @interface RCT_EXTERN_MODULE(RNGraphQL, RCTEventEmitter)
-RCT_EXTERN_METHOD(createClient: (NSString *)key descriptor: (NSString *)descriptor endpoint: (NSString *)endpoint connectionParams: (NSDictionary *)connectionParams storage: (NSString *)storage)
+RCT_EXTERN_METHOD(createClient: (NSString *)key descriptor: (NSString *)descriptor endpoint: (NSString *)endpoint connectionParams: (NSDictionary *)connectionParams storage: (NSString *)storage mode: (NSString *)mode)
 RCT_EXTERN_METHOD(closeClient: (NSString *)key)
 
 RCT_EXTERN_METHOD(query: (NSString *)key id: (NSString *)id query: (NSString *)query arguments: (NSDictionary *)arguments

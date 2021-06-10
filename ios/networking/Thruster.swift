@@ -29,7 +29,7 @@ class Thruster {
   private var closed = false
   private var nextTimer = 0
   
-  init(configs: [ThrusterConfig], onSuccess:  @escaping (_ src: WrappedWebSocket) -> Void, queue: DispatchQueue) {
+  init(configs: [ThrusterConfig], mode: String, onSuccess:  @escaping (_ src: WrappedWebSocket) -> Void, queue: DispatchQueue) {
     self.queue = queue
     self.configs = configs
     self.onSuccess = onSuccess

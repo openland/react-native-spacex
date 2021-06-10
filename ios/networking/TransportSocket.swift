@@ -41,7 +41,7 @@ class TransportSocket {
   
   private var lastPingId = 0
   
-  init(url: String, params: [String: String?]) {
+  init(url: String, mode: String, params: [String: String?]) {
     self.callbackQueue = self.queue
     self.id = TransportSocket.nextId.getAndIncrement()
     self.url = url
@@ -111,7 +111,7 @@ class TransportSocket {
       fatalError("Unexpected state")
     }
     self.state = .connecting
-    let ws = ThrustedSocket(url: self.url, timeout: 5000, queue: self.queue)
+    let ws = ThrustedSocket(url: self.url, mode: self.mode, timeout: 5000, queue: self.queue)
     ws.onConnect = {
       if self.socket === ws {
         self.onConnected()

@@ -62,10 +62,10 @@ class TransportState: NetworkingDelegate {
   fileprivate var connected = false
   fileprivate let queue = DispatchQueue(label: "transport")
   
-  init(url: String, params: [String: String?]) {
+  init(url: String, mode: String, params: [String: String?]) {
     self.url = url
     self.params = params
-    self.connection = TransportSocket(url: self.url, params: self.params)
+    self.connection = TransportSocket(url: self.url, mode: mode, params: self.params)
     self.connection.delegate = self
     self.connection.callbackQueue = queue
     self.connection.connect()

@@ -38,9 +38,9 @@ public class SpaceXClient {
   var onConnected: (() -> Void)?
   var onDisconnected: (() -> Void)?
   
-  init(url: String, connectionParams: [String:String], storage: String?) {
+  init(url: String, mode: String, connectionParams: [String:String], storage: String?) {
     NSLog("[SpaceX-Alloc]: init SpaceXClient")
-    self.transport = SpaceXTransport(url: url, params: connectionParams)
+    self.transport = SpaceXTransport(url: url, mode: mode, params: connectionParams)
     self.store = SpaceXStore(name: storage)
     self.connected = self.transport.connected
     self.transport.onConnected = { [weak self] in
