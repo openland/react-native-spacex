@@ -8,7 +8,7 @@ import {
     GraphqlBridgedEngine, QueryParameters,
     GraphqlUnknownError, GraphqlError
 } from '@openland/spacex';
-import UUID from 'uuid';
+import * as UUID from 'uuid';
 
 function randomKey() {
     return UUID.v4();
