@@ -15,9 +15,9 @@ public class RNGraphQL: RCTEventEmitter {
   
   private var clients: [String: RNGraphqlClient] = [:]
   
-  @objc(createClient:endpoint:descriptor:token:storage:)
+  @objc(createClient:endpoint:descriptor:connectionParams:storage:)
   func createClient(key: String, endpoint: String, descriptor: String, connectionParams: NSDictionary, storage: String?) {
-    self.clients[key] = RNGraphqlClient(key: key, descriptor: descriptor, endpoint: endpoint, connectionParams: connectionParams as Dictionary<String, String>, storage: storage, module: self)
+    self.clients[key] = RNGraphqlClient(key: key, descriptor: descriptor, endpoint: endpoint, connectionParams: connectionParams as! Dictionary<String, String>, storage: storage, module: self)
   }
   
   @objc(closeClient:)
@@ -101,7 +101,7 @@ public class RNGraphQL: RCTEventEmitter {
   }
 
   
-public override var methodQueue: DispatchQueue! {
+  public override var methodQueue: DispatchQueue! {
      get { return GraphQLQueue }
   }
   
@@ -110,7 +110,7 @@ public override var methodQueue: DispatchQueue! {
   }
   
   @objc(invalidate)
-  func invalidate() {
+  public override func invalidate() {
     for s in self.clients.values {
       s.dispose()
     }
