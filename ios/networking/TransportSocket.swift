@@ -138,9 +138,15 @@ class TransportSocket {
       fatalError("Unexpected state")
     }
     self.state = .starting
-    self.writeToSocket(msg: JSON([
-      "protocol_v": 2,"type": "connection_init", "payload": self.params
-    ]))
+    if self.mode == "openland" {
+      self.writeToSocket(msg: JSON([
+        "protocol_v": 2,"type": "connection_init", "payload": self.params
+      ]))
+    } else {
+      self.writeToSocket(msg: JSON([
+        "type": "connection_init", "payload": self.params
+      ]))
+    }
     for p in self.pending {
       self.writeToSocket(msg: JSON(["type": "start", "id": p.key, "payload": p.value]))
     }
@@ -148,6 +154,9 @@ class TransportSocket {
   }
   
   private func schedulePing() {
+    if self.mode != "openland" {
+      return
+    }
     NSLog("[SpaceX-WS]: schedule ping")
     self.lastPingId += 1
     let pingId = self.lastPingId
@@ -213,7 +222,9 @@ class TransportSocket {
     } else if type == "ping" {
       self.queue.async {
         if (self.state == .started) {
-          self.writeToSocket(msg: JSON(["type": "pong"]))
+          if (self.mode == "openland") {
+            self.writeToSocket(msg: JSON(["type": "pong"]))
+          }
         }
       }
     }else if type == "pong" {

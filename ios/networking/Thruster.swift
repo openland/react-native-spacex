@@ -28,11 +28,13 @@ class Thruster {
   private var bucketTimeouts: [Int?] = []
   private var closed = false
   private var nextTimer = 0
+  private var mode: String
   
   init(configs: [ThrusterConfig], mode: String, onSuccess:  @escaping (_ src: WrappedWebSocket) -> Void, queue: DispatchQueue) {
     self.queue = queue
     self.configs = configs
     self.onSuccess = onSuccess
+    self.mode = mode
     
     NSLog("[Thruster]: New")
     
@@ -61,7 +63,7 @@ class Thruster {
       ex?.disconnect()
       self.bucketTimeouts[id] = nil
     }
-    let request = URLRequest(url: URL(string: url)!)
+    var request = URLRequest(url: URL(string: url)!)
     if (self.mode != "openland") {
       request.setValue("graphql-ws", forHTTPHeaderField: "Sec-WebSocket-Protocol")
     }
