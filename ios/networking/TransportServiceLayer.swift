@@ -25,10 +25,10 @@ fileprivate class PendingOperation: RunningOperation {
   let operation: OperationDefinition
   let variables: JSON
   let callback: (TransportResult) -> Void
-  weak var parent: TransportState?
+  weak var parent: TransportServiceLayer?
   
   init(
-    parent: TransportState,
+    parent: TransportServiceLayer,
     id: String,
     requestId: String,
     operation: OperationDefinition,
@@ -48,13 +48,13 @@ fileprivate class PendingOperation: RunningOperation {
   }
 }
 
-class TransportState: NetworkingDelegate {
+class TransportServiceLayer: NetworkingDelegate {
   
   let url: String
   let params: [String: String?]
   var connectionCallback: ((Bool) -> Void)?
   private let nextId = AtomicInteger(value: 1)
-  fileprivate var connection: TransportSocket
+  fileprivate var connection: CommonTransportLayer
   
   fileprivate var liveOperationsIds: [String: String] = [:]
   fileprivate var liveOperations: [String: PendingOperation] = [:]
@@ -62,10 +62,10 @@ class TransportState: NetworkingDelegate {
   fileprivate var connected = false
   fileprivate let queue = DispatchQueue(label: "transport")
   
-  init(url: String, mode: String, params: [String: String?]) {
+  init(provider: WebSocketProvider, url: String, mode: String, params: [String: String?]) {
     self.url = url
     self.params = params
-    self.connection = TransportSocket(url: self.url, mode: mode, params: self.params)
+    self.connection = CommonTransportLayer(provider: provider, url: self.url, mode: mode, params: self.params)
     self.connection.delegate = self
     self.connection.callbackQueue = queue
     self.connection.connect()

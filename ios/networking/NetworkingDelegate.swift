@@ -5,7 +5,7 @@
 import Foundation
 import SwiftyJSON
 
-protocol NetworkingDelegate: class {
+protocol NetworkingDelegate: AnyObject {
   
   // Callbacks
   func onResponse(id: String, data: JSON)

@@ -16,14 +16,20 @@ enum SpaceXTransportOperationResult {
 
 class SpaceXTransport {
   private let queue = DispatchQueue(label: "spacex-transport")
-  private let transport: TransportState
+  private let transport: TransportServiceLayer
   var connected: Bool = false
   var onConnected: (() -> Void)?
   var onDisconnected: (() -> Void)?
   
   init(url: String, mode: String, params: [String: String?]) {
     NSLog("[SpaceX-Alloc]: init SpaceXTransportScheduler")
-    self.transport = TransportState(url: url, mode: mode, params: params)
+    var provider: WebSocketProvider = WebSocketProviderRaw()
+    if mode == "openland" {
+        provider = WebSocketProviderWatchDog(inner: provider, timeout: 5000)
+    } else {
+        provider = WebSocketProviderWatchDog(inner: provider, timeout: 15000)
+    }
+    self.transport = TransportServiceLayer(provider: provider, url: url, mode: mode, params: params)
     self.transport.connectionCallback = { connected in
       self.queue.async {
         if self.connected != connected {

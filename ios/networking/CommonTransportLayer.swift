@@ -18,33 +18,46 @@ enum TransportSocketState {
   case completed
 }
 
-class TransportSocket {
+protocol NetworkingDelegate: AnyObject {
+  
+  // Callbacks
+  func onResponse(id: String, data: JSON)
+  func onError(id: String, error: JSON)
+  func onCompleted(id: String)
+  
+  // Session state
+  func onSessiontRestart()
+  func onConnected()
+  func onDisconnected()
+}
+
+class CommonTransportLayer: WebSocketConnectionDelegate {
   
   private static var nextId: AtomicInteger = AtomicInteger(value: 1)
   private static let PING_INTERVAL = 30
   private static let PING_TIMEOUT = 10
   
   private let queue = DispatchQueue(label: "spacex-networking-transport")
-  
+    
   let id: Int
   let url: String
   let params: [String: String?]
   weak var delegate: NetworkingDelegate? = nil
   var callbackQueue: DispatchQueue
-  // private let reachability: Reachability
-  private var socket: ThrustedSocket? = nil
+  let provider: WebSocketProvider
+  private var connection: WebSocketConnection? = nil
   private var pending: [String: JSON] = [:]
   private var state: TransportSocketState = .waiting
   private var failuresCount = 0
-  private var reachable = true
   private var started = false
   private var mode: String
   
   private var lastPingId = 0
   
-  init(url: String, mode: String, params: [String: String?]) {
+  init(provider: WebSocketProvider, url: String, mode: String, params: [String: String?]) {
     self.callbackQueue = self.queue
-    self.id = TransportSocket.nextId.getAndIncrement()
+    self.provider = provider
+    self.id = CommonTransportLayer.nextId.getAndIncrement()
     self.url = url
     self.params = params
     self.mode = mode
@@ -54,9 +67,7 @@ class TransportSocket {
     NSLog("[SpaceX-WS]: Starting")
     queue.async {
       self.started = true
-      if self.reachable {
-        self.doConnect()
-      }
+      self.doConnect()
     }
   }
   
@@ -113,26 +124,18 @@ class TransportSocket {
       fatalError("Unexpected state")
     }
     self.state = .connecting
-    let ws = ThrustedSocket(url: self.url, mode: self.mode, timeout: 5000, queue: self.queue)
-    ws.onConnect = {
-      if self.socket === ws {
-        self.onConnected()
-      }
+    
+    // Create new connection
+    var proto: String? = nil
+    if (self.mode != "openland") {
+        proto = "graphql-ws"
     }
-    ws.onDisconnect = {
-      if self.socket === ws {
-        self.onDisconnected()
-      }
-    }
-    ws.onText = { text in
-      if self.socket === ws {
-        self.onReceived(message: text)
-      }
-    }
-    self.socket = ws
+    let ws = self.provider.create(endpoint: WebSocketEndpoint(url: self.url, proto: proto), queue: self.queue)
+    ws.delegate = self
+    self.connection = ws
   }
-  
-  private func onConnected() {
+    
+  func onOpen() {
     NSLog("[SpaceX-WS]: onConnected")
     if self.state != .connecting {
       fatalError("Unexpected state")
@@ -152,31 +155,8 @@ class TransportSocket {
     }
     schedulePing()
   }
-  
-  private func schedulePing() {
-    if self.mode != "openland" {
-      return
-    }
-    NSLog("[SpaceX-WS]: schedule ping")
-    self.lastPingId += 1
-    let pingId = self.lastPingId
-    self.queue.asyncAfter(deadline: .now() + .seconds(TransportSocket.PING_INTERVAL)) {
-      if (self.state == .started) {
-        NSLog("[SpaceX-WS]: sending ping")
-        self.writeToSocket(msg: JSON(["type": "ping"]))
-        self.queue.asyncAfter(deadline: .now() + .seconds(TransportSocket.PING_TIMEOUT)) {
-          if(self.state == .started && self.lastPingId == pingId) {
-            NSLog("[SpaceX-WS]: ping timeout")
-            self.onDisconnected()
-          }
-        }
-      }
-    }
-  }
-  
-  private func onReceived(message: String) {
-    // print("[SpaceX-Apollo]: << " + message)
     
+  func onMessage(message: String) {
     let parsed = JSON(parseJSON: message)
     let type = parsed["type"].stringValue
     NSLog("[SpaceX-WS]: <<" + type)
@@ -237,22 +217,8 @@ class TransportSocket {
       }
     }
   }
-  
-  private func onReachable() {
-    self.reachable = true
-    if self.started && (self.state == .waiting || self.state == .connecting) {
-      self.stopClient()
-      self.state = .waiting
-      self.failuresCount = 0
-      self.doConnect()
-    }
-  }
-  
-  private func onUnreachable() {
-    self.reachable = false
-  }
-  
-  private func onDisconnected() {
+    
+  func onClose() {
     NSLog("[SpaceX-WS]: onDisconnected")
     if self.state == .started {
       self.callbackQueue.async {
@@ -265,8 +231,28 @@ class TransportSocket {
     self.failuresCount += 1
     
     
-    if self.reachable {
-      self.doConnect()
+    self.doConnect()
+  }
+  
+  
+  private func schedulePing() {
+    if self.mode != "openland" {
+      return
+    }
+    NSLog("[SpaceX-WS]: schedule ping")
+    self.lastPingId += 1
+    let pingId = self.lastPingId
+    self.queue.asyncAfter(deadline: .now() + .seconds(CommonTransportLayer.PING_INTERVAL)) {
+      if (self.state == .started) {
+        NSLog("[SpaceX-WS]: sending ping")
+        self.writeToSocket(msg: JSON(["type": "ping"]))
+        self.queue.asyncAfter(deadline: .now() + .seconds(CommonTransportLayer.PING_TIMEOUT)) {
+          if(self.state == .started && self.lastPingId == pingId) {
+            NSLog("[SpaceX-WS]: ping timeout")
+            self.onClose()
+          }
+        }
+      }
     }
   }
   
@@ -290,20 +276,17 @@ class TransportSocket {
   
   private func stopClient() {
     // Removing client if present
-    let ws = self.socket
-    self.socket = nil
+    let ws = self.connection
+    self.connection = nil
     
     // Stopping client
-    ws?.onText = nil
-    ws?.onConnect = nil
-    ws?.onDisconnect = nil
+    ws?.delegate = nil
     ws?.close()
   }
   
   private func writeToSocket(msg: JSON) {
     let txt = serializeJson(json: msg)
     NSLog("[SpaceX-WS]: >>" + msg["type"].stringValue)
-    // print("[SpaceX-Apollo]: >> \(txt)")
-    self.socket!.send(msg: txt)
+    self.connection!.send(message: txt)
   }
 }
