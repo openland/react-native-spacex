@@ -20,7 +20,7 @@ const NativeGraphQL = NativeModules.RNGraphQL as {
         key: string,
         descriptor: string,
         endpoint: string,
-        connectionParams: any | null,
+        connectionParams: { [key: string]: string } | null,
         persistenceKey: string | null
     ) => void
     closeClient: (key: string) => void;
