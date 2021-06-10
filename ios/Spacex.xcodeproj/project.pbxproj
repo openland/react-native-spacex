@@ -7,10 +7,24 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-
-		5E555C0D2413F4C50049A1A2 /* Spacex.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* Spacex.m */; };
-		F4FF95D7245B92E800C19C63 /*  Spacex.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4FF95D6245B92E800C19C63 /*  Spacex.swift */; };
-
+		AA25B183267231EF0068004F /* RNGraphqlClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA25B16E267231320068004F /* RNGraphqlClient.swift */; };
+		AA25B184267231F70068004F /* RNGraphqlDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA25B170267231320068004F /* RNGraphqlDescriptor.swift */; };
+		AA25B185267231F70068004F /* selectorKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA25B166267231320068004F /* selectorKey.swift */; };
+		AA25B186267231F70068004F /* Serialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA25B15F267231320068004F /* Serialization.swift */; };
+		AA25B187267231F70068004F /* TransportState.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA25B169267231320068004F /* TransportState.swift */; };
+		AA25B188267231F70068004F /* SpaceXPersistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA25B16A267231320068004F /* SpaceXPersistence.swift */; };
+		AA25B189267231F70068004F /* SpaceXTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA25B16C267231320068004F /* SpaceXTransport.swift */; };
+		AA25B18A267231F70068004F /* SpaceXUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA25B164267231320068004F /* SpaceXUtils.swift */; };
+		AA25B18B267231F70068004F /* ThrustedSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA25B16B267231320068004F /* ThrustedSocket.swift */; };
+		AA25B18C267231F70068004F /* SpaceXClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA25B165267231320068004F /* SpaceXClient.swift */; };
+		AA25B18D267231F70068004F /* WatchDogTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA25B16D267231320068004F /* WatchDogTimer.swift */; };
+		AA25B18E267231F70068004F /* RNGraphqlModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA25B160267231320068004F /* RNGraphqlModule.swift */; };
+		AA25B18F267231F70068004F /* Thruster.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA25B161267231320068004F /* Thruster.swift */; };
+		AA25B190267231F70068004F /* TransportSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA25B162267231320068004F /* TransportSocket.swift */; };
+		AA25B191267231F70068004F /* WrappedWebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA25B16F267231320068004F /* WrappedWebSocket.swift */; };
+		AA25B192267231F70068004F /* SpaceXStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA25B167267231320068004F /* SpaceXStore.swift */; };
+		AA25B193267231F70068004F /* SpaceXOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA25B168267231320068004F /* SpaceXOperations.swift */; };
+		AA25B194267231F70068004F /* Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA25B163267231320068004F /* Types.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -27,11 +41,25 @@
 
 /* Begin PBXFileReference section */
 		134814201AA4EA6300B7C361 /* libSpacex.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSpacex.a; sourceTree = BUILT_PRODUCTS_DIR; };
-
-		B3E7B5891CC2AC0600A0062D /* Spacex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Spacex.m; sourceTree = "<group>"; };
+		AA25B15F267231320068004F /* Serialization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Serialization.swift; sourceTree = "<group>"; };
+		AA25B160267231320068004F /* RNGraphqlModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RNGraphqlModule.swift; sourceTree = "<group>"; };
+		AA25B161267231320068004F /* Thruster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Thruster.swift; sourceTree = "<group>"; };
+		AA25B162267231320068004F /* TransportSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransportSocket.swift; sourceTree = "<group>"; };
+		AA25B163267231320068004F /* Types.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Types.swift; sourceTree = "<group>"; };
+		AA25B164267231320068004F /* SpaceXUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceXUtils.swift; sourceTree = "<group>"; };
+		AA25B165267231320068004F /* SpaceXClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceXClient.swift; sourceTree = "<group>"; };
+		AA25B166267231320068004F /* selectorKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = selectorKey.swift; sourceTree = "<group>"; };
+		AA25B167267231320068004F /* SpaceXStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceXStore.swift; sourceTree = "<group>"; };
+		AA25B168267231320068004F /* SpaceXOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceXOperations.swift; sourceTree = "<group>"; };
+		AA25B169267231320068004F /* TransportState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransportState.swift; sourceTree = "<group>"; };
+		AA25B16A267231320068004F /* SpaceXPersistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceXPersistence.swift; sourceTree = "<group>"; };
+		AA25B16B267231320068004F /* ThrustedSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThrustedSocket.swift; sourceTree = "<group>"; };
+		AA25B16C267231320068004F /* SpaceXTransport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceXTransport.swift; sourceTree = "<group>"; };
+		AA25B16D267231320068004F /* WatchDogTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchDogTimer.swift; sourceTree = "<group>"; };
+		AA25B16E267231320068004F /* RNGraphqlClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RNGraphqlClient.swift; sourceTree = "<group>"; };
+		AA25B16F267231320068004F /* WrappedWebSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrappedWebSocket.swift; sourceTree = "<group>"; };
+		AA25B170267231320068004F /* RNGraphqlDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RNGraphqlDescriptor.swift; sourceTree = "<group>"; };
 		F4FF95D5245B92E700C19C63 /* Spacex-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Spacex-Bridging-Header.h"; sourceTree = "<group>"; };
-		F4FF95D6245B92E800C19C63 /* Spacex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spacex.swift; sourceTree = "<group>"; };
-
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,11 +84,25 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
-
-				F4FF95D6245B92E800C19C63 /* Spacex.swift */,
-				B3E7B5891CC2AC0600A0062D /* Spacex.m */,
+				AA25B16E267231320068004F /* RNGraphqlClient.swift */,
+				AA25B170267231320068004F /* RNGraphqlDescriptor.swift */,
+				AA25B160267231320068004F /* RNGraphqlModule.swift */,
+				AA25B166267231320068004F /* selectorKey.swift */,
+				AA25B15F267231320068004F /* Serialization.swift */,
+				AA25B165267231320068004F /* SpaceXClient.swift */,
+				AA25B168267231320068004F /* SpaceXOperations.swift */,
+				AA25B16A267231320068004F /* SpaceXPersistence.swift */,
+				AA25B167267231320068004F /* SpaceXStore.swift */,
+				AA25B16C267231320068004F /* SpaceXTransport.swift */,
+				AA25B164267231320068004F /* SpaceXUtils.swift */,
+				AA25B16B267231320068004F /* ThrustedSocket.swift */,
+				AA25B161267231320068004F /* Thruster.swift */,
+				AA25B162267231320068004F /* TransportSocket.swift */,
+				AA25B169267231320068004F /* TransportState.swift */,
+				AA25B163267231320068004F /* Types.swift */,
+				AA25B16D267231320068004F /* WatchDogTimer.swift */,
+				AA25B16F267231320068004F /* WrappedWebSocket.swift */,
 				F4FF95D5245B92E700C19C63 /* Spacex-Bridging-Header.h */,
-
 				134814211AA4EA7D00B7C361 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -122,10 +164,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-
-				F4FF95D7245B92E800C19C63 /* Spacex.swift in Sources */,
-				B3E7B58A1CC2AC0600A0062D /* Spacex.m in Sources */,
-
+				AA25B186267231F70068004F /* Serialization.swift in Sources */,
+				AA25B18A267231F70068004F /* SpaceXUtils.swift in Sources */,
+				AA25B188267231F70068004F /* SpaceXPersistence.swift in Sources */,
+				AA25B193267231F70068004F /* SpaceXOperations.swift in Sources */,
+				AA25B191267231F70068004F /* WrappedWebSocket.swift in Sources */,
+				AA25B184267231F70068004F /* RNGraphqlDescriptor.swift in Sources */,
+				AA25B18D267231F70068004F /* WatchDogTimer.swift in Sources */,
+				AA25B18F267231F70068004F /* Thruster.swift in Sources */,
+				AA25B18E267231F70068004F /* RNGraphqlModule.swift in Sources */,
+				AA25B18C267231F70068004F /* SpaceXClient.swift in Sources */,
+				AA25B190267231F70068004F /* TransportSocket.swift in Sources */,
+				AA25B185267231F70068004F /* selectorKey.swift in Sources */,
+				AA25B183267231EF0068004F /* RNGraphqlClient.swift in Sources */,
+				AA25B189267231F70068004F /* SpaceXTransport.swift in Sources */,
+				AA25B192267231F70068004F /* SpaceXStore.swift in Sources */,
+				AA25B194267231F70068004F /* Types.swift in Sources */,
+				AA25B18B267231F70068004F /* ThrustedSocket.swift in Sources */,
+				AA25B187267231F70068004F /* TransportState.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -238,11 +294,9 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = Spacex;
 				SKIP_INSTALL = YES;
-
 				SWIFT_OBJC_BRIDGING_HEADER = "Spacex-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-
 			};
 			name = Debug;
 		};
@@ -259,10 +313,8 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = Spacex;
 				SKIP_INSTALL = YES;
-
 				SWIFT_OBJC_BRIDGING_HEADER = "Spacex-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
-
 			};
 			name = Release;
 		};
