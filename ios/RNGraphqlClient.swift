@@ -51,7 +51,7 @@ public class RNGraphqlClient {
   var live = true
   let descriptor: SpaceXOperations
   
-  init(key: String, endpoint: String, descriptor: String, token: String?, storage: String?, module: RNGraphQL) {
+  init(key: String, descriptor: String, endpoint: String, connectionParams: [String:String], storage: String?, module: RNGraphQL) {
     self.module = module
     self.key = key
     self.descriptor = SpaceXOperationDescriptor(raw: JSON(parseJSON: descriptor))
