@@ -61,8 +61,11 @@ class Thruster {
       ex?.disconnect()
       self.bucketTimeouts[id] = nil
     }
-    
-    let ws = WrappedWebSocket(ws: WebSocket(request: URLRequest(url: URL(string: url)!)), queue: self.queue)
+    let request = URLRequest(url: URL(string: url)!)
+    if (self.mode != "openland") {
+      request.setValue("graphql-ws", forHTTPHeaderField: "Sec-WebSocket-Protocol")
+    }
+    let ws = WrappedWebSocket(ws: WebSocket(request: request), queue: self.queue)
     ws.onConnect = {
       if self.closed {
         return

@@ -17,7 +17,7 @@ public class RNGraphQL: RCTEventEmitter {
   
   @objc(createClient:descriptor:endpoint:connectionParams:storage:mode:)
   func createClient(key: String, descriptor: String, endpoint: String, connectionParams: NSDictionary, storage: String?, mode: String) {
-    self.clients[key] = RNGraphqlClient(key: key, descriptor: descriptor, endpoint: endpoint, connectionParams: connectionParams as! Dictionary<String, String>, storage: storage, module: self)
+    self.clients[key] = RNGraphqlClient(key: key, descriptor: descriptor, endpoint: endpoint, connectionParams: connectionParams as! Dictionary<String, String>, storage: storage, mode: mode, module: self)
   }
   
   @objc(closeClient:)

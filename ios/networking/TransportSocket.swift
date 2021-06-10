@@ -38,6 +38,7 @@ class TransportSocket {
   private var failuresCount = 0
   private var reachable = true
   private var started = false
+  private var mode: String
   
   private var lastPingId = 0
   
@@ -46,6 +47,7 @@ class TransportSocket {
     self.id = TransportSocket.nextId.getAndIncrement()
     self.url = url
     self.params = params
+    self.mode = mode
   }
   
   func connect() {
