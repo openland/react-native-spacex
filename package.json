@@ -1,6 +1,6 @@
 {
   "name": "react-native-spacex",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Native Engine for SpaceX",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
