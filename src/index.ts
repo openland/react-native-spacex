@@ -14,7 +14,7 @@ function randomKey() {
     return UUID.v4();
 }
 
-const NativeGraphQL = NativeModules.SpaceX as {
+const NativeGraphQL = NativeModules.RNGraphQL as {
 
     createClient: (
         key: string,
@@ -40,7 +40,7 @@ const NativeGraphQL = NativeModules.SpaceX as {
     write: (key: string, id: string, data: any, query: string, vars: any) => void;
 };
 
-const RNGraphQLEmitter = new NativeEventEmitter(NativeModules.SpaceX);
+const RNGraphQLEmitter = new NativeEventEmitter(NativeModules.RNGraphQL);
 
 export type NativeEngineOpts = {
     definitions: any;

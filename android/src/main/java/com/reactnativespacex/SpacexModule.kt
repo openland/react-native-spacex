@@ -267,7 +267,7 @@ class SpacexModule(reactContext: ReactApplicationContext) : ReactContextBaseJava
   private val clients = mutableMapOf<String, NativeGraphqlClient>()
 
   override fun getName(): String {
-    return "SpaceX"
+    return "RNGraphQL"
   }
 
   @ReactMethod
