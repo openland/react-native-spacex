@@ -40,7 +40,7 @@ const NativeGraphQL = NativeModules.SpaceX as {
     write: (key: string, id: string, data: any, query: string, vars: any) => void;
 };
 
-const RNGraphQLEmitter = new NativeEventEmitter(NativeModules.RNGraphQL);
+const RNGraphQLEmitter = new NativeEventEmitter(NativeModules.SpaceX);
 
 export type NativeEngineOpts = {
     definitions: any;
