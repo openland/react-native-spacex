@@ -1393,10 +1393,10 @@
   dependencies:
     "@octokit/openapi-types" "^7.2.3"
 
-"@openland/spacex@^5.0.4":
-  version "5.0.4"
-  resolved "https://registry.yarnpkg.com/@openland/spacex/-/spacex-5.0.4.tgz#3d193cfff8019c04252f8d4681967bcf6b82c2a1"
-  integrity sha512-uxRTouDmx03Xcxa7DXish1XKVJf5ik+2FC0LGzzr/INJt8w+y6LQ5Rj0/00qp5mt4WPV8r/uaqInHQ41Kc1pbw==
+"@openland/spacex@6.0.4":
+  version "6.0.4"
+  resolved "https://registry.yarnpkg.com/@openland/spacex/-/spacex-6.0.4.tgz#871d98b0b6719c3d304e61ca3bcf185c502f0ad3"
+  integrity sha512-UWtX0AvtMC0nsV5LlBExLTPw+ra0aIqaHx68XyMcXm/iBK0SFpTgcPEQNhSyvWAyLg3zgbU+ssz0t2UdVlDNyw==
   dependencies:
     isomorphic-ws "4.0.1"
     uuid "3.4.0"

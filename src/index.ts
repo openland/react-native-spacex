@@ -14,7 +14,7 @@ function randomKey() {
     return UUID.v4();
 }
 
-const NativeGraphQL = NativeModules.RNGraphQL as {
+const NativeGraphQL = NativeModules.SpaceX as {
 
     createClient: (
         key: string,

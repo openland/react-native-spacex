@@ -96,7 +96,7 @@
     ]
   },
   "dependencies": {
-    "@openland/spacex": "^5.0.4",
+    "@openland/spacex": "6.0.4",
     "uuid": "^8.3.2"
   }
 }
