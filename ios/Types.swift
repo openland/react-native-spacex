@@ -8,13 +8,13 @@
 
 import Foundation
 
-public enum OperationKind {
+enum OperationKind {
   case subscription
   case query
   case mutation
 }
 
-public class FragmentDefinition {
+class FragmentDefinition {
   let name: String
   let selector: OutputType.Object
   
@@ -24,7 +24,7 @@ public class FragmentDefinition {
   }
 }
 
-public class OperationDefinition {
+class OperationDefinition {
   let name: String
   let kind: OperationKind
   let body: String
@@ -37,7 +37,7 @@ public class OperationDefinition {
   }
 }
 
-public struct InvalidDataError: Error {
+struct InvalidDataError: Error {
   let message: String
   
   init(_ message: String) {
@@ -50,7 +50,7 @@ public struct InvalidDataError: Error {
 }
 
 open class InputValue {
-  public class StringValue: InputValue {
+  class StringValue: InputValue {
     let value: String
     init(value: String) {
       self.value = value
@@ -58,7 +58,7 @@ open class InputValue {
     }
   }
   
-  public class IntValue: InputValue {
+  class IntValue: InputValue {
     let value: Int
     init(value: Int) {
       self.value = value
@@ -66,7 +66,7 @@ open class InputValue {
     }
   }
   
-  public class FloatValue: InputValue {
+  class FloatValue: InputValue {
     let value: Double
     init(value: Double) {
       self.value = value
@@ -74,7 +74,7 @@ open class InputValue {
     }
   }
   
-  public class BooleanValue: InputValue {
+  class BooleanValue: InputValue {
     let value: Bool
     init(value: Bool) {
       self.value = value
@@ -82,13 +82,13 @@ open class InputValue {
     }
   }
   
-  public class NullValue: InputValue {
+  class NullValue: InputValue {
     override init() {
       super.init()
     }
   }
   
-  public class ListValue: InputValue {
+  class ListValue: InputValue {
     let items: [InputValue]
     init(items: [InputValue]) {
       self.items = items
@@ -96,7 +96,7 @@ open class InputValue {
     }
   }
   
-  public class ObjectValue: InputValue {
+  class ObjectValue: InputValue {
     let fields: [String: InputValue]
     init(fields: [String: InputValue]) {
       self.fields = fields
@@ -104,7 +104,7 @@ open class InputValue {
     }
   }
   
-  public class ReferenceValue: InputValue {
+  class ReferenceValue: InputValue {
     let value: String
     init(value: String) {
       self.value = value
@@ -119,7 +119,7 @@ open class InputValue {
 
 open class OutputType {
 
-  public class NotNull: OutputType {
+  class NotNull: OutputType {
     let inner: OutputType
     init(inner: OutputType) {
       self.inner = inner
@@ -127,7 +127,7 @@ open class OutputType {
     }
   }
   
-  public class List: OutputType {
+  class List: OutputType {
     let inner: OutputType
     init(inner: OutputType) {
       self.inner = inner
@@ -135,7 +135,7 @@ open class OutputType {
     }
   }
   
-  public class Scalar: OutputType {
+  class Scalar: OutputType {
     let name: String
     init(name: String) {
       self.name = name
@@ -143,7 +143,7 @@ open class OutputType {
     }
   }
   
-  public class Object: OutputType {
+  class Object: OutputType {
     let selectors: [Selector]
     init(selectors: [Selector]) {
       self.selectors = selectors
@@ -158,7 +158,7 @@ open class OutputType {
 
 open class Selector {
   
-  public class Field: Selector {
+  class Field: Selector {
     let name: String
     let alias: String
     let type: OutputType
@@ -172,7 +172,7 @@ open class Selector {
     }
   }
   
-  public class TypeCondition: Selector {
+  class TypeCondition: Selector {
     let name: String
     let type: OutputType.Object
     init(name: String, type: OutputType.Object) {
@@ -182,7 +182,7 @@ open class Selector {
     }
   }
   
-  public class Fragment: Selector {
+  class Fragment: Selector {
     let name: String
     let type: OutputType.Object
     init(name: String, type: OutputType.Object) {
@@ -235,21 +235,21 @@ open class RecordValue: Equatable {
     return false
   }
   
-  public class StringValue: RecordValue {
+  class StringValue: RecordValue {
     let value: String
     init(value: String) {
       self.value = value
       super.init()
     }
   }
-  public class NumberValue: RecordValue {
+  class NumberValue: RecordValue {
     let value: Double
     init(value: Double) {
       self.value = value
       super.init()
     }
   }
-  public class BooleanValue: RecordValue {
+  class BooleanValue: RecordValue {
     let value: Bool
     init(value: Bool) {
       self.value = value
@@ -257,13 +257,13 @@ open class RecordValue: Equatable {
     }
   }
   
-  public class NullValue: RecordValue {
+  class NullValue: RecordValue {
     override init() {
       super.init()
     }
   }
   
-  public class ReferenceValue: RecordValue {
+  class ReferenceValue: RecordValue {
     let key: String
     init(key: String) {
       self.key = key
@@ -271,7 +271,7 @@ open class RecordValue: Equatable {
     }
   }
   
-  public class ListValue: RecordValue {
+  class ListValue: RecordValue {
     let items: [RecordValue]
     init(items: [RecordValue]) {
       self.items = items
@@ -284,7 +284,7 @@ open class RecordValue: Equatable {
   }
 }
 
-public class Record {
+class Record {
   let key: String
   let fields: [String:RecordValue]
   init(key: String, fields: [String:RecordValue]) {
@@ -293,7 +293,7 @@ public class Record {
   }
 }
 
-public typealias RecordSet = [String:Record]
+typealias RecordSet = [String:Record]
 
 class SharedDictionary<K : Hashable, V> {
   var dict : Dictionary<K, V> = Dictionary()
@@ -312,15 +312,15 @@ class SharedDictionary<K : Hashable, V> {
 // Basics
 //
 
-public func list(_ inner: OutputType) -> OutputType.List {
+func list(_ inner: OutputType) -> OutputType.List {
   return OutputType.List(inner: inner)
 }
 
-public func notNull(_ inner: OutputType) -> OutputType.NotNull {
+func notNull(_ inner: OutputType) -> OutputType.NotNull {
   return OutputType.NotNull(inner: inner)
 }
 
-public func scalar(_ name: String) -> OutputType.Scalar {
+func scalar(_ name: String) -> OutputType.Scalar {
   return OutputType.Scalar(name: name)
 }
 
@@ -328,15 +328,15 @@ public func scalar(_ name: String) -> OutputType.Scalar {
 // Objects
 //
 
-public func obj(_ selectors: Selector...) -> OutputType.Object {
+func obj(_ selectors: Selector...) -> OutputType.Object {
   return OutputType.Object(selectors: selectors)
 }
 
-public func obj(_ selectors: [Selector]) -> OutputType.Object {
+func obj(_ selectors: [Selector]) -> OutputType.Object {
   return OutputType.Object(selectors: selectors)
 }
 
-public func arguments(_ src: (String, InputValue)...) -> [String: InputValue] {
+func arguments(_ src: (String, InputValue)...) -> [String: InputValue] {
   var res: [String: InputValue] = [:]
   for s in src {
     res[s.0] = s.1
@@ -344,43 +344,43 @@ public func arguments(_ src: (String, InputValue)...) -> [String: InputValue] {
   return res
 }
 
-public func fieldValue(_ name: String, _ value: InputValue) -> (String, InputValue) {
+func fieldValue(_ name: String, _ value: InputValue) -> (String, InputValue) {
   return (name, value)
 }
 
-public func refValue(_ key: String) -> InputValue.ReferenceValue {
+func refValue(_ key: String) -> InputValue.ReferenceValue {
   return InputValue.ReferenceValue(value: key)
 }
 
-public func intValue(_ v: Int) -> InputValue.IntValue {
+func intValue(_ v: Int) -> InputValue.IntValue {
   return InputValue.IntValue(value: v)
 }
 
-public func boolValue(_ v: Bool) -> InputValue.BooleanValue {
+func boolValue(_ v: Bool) -> InputValue.BooleanValue {
   return InputValue.BooleanValue(value: v)
 }
 
-public func floatValue(_ v: Double) -> InputValue.FloatValue {
+func floatValue(_ v: Double) -> InputValue.FloatValue {
   return InputValue.FloatValue(value: v)
 }
 
-public func nullValue() -> InputValue.NullValue {
+func nullValue() -> InputValue.NullValue {
   return InputValue.NullValue()
 }
 
-public func stringValue(_ v: String) -> InputValue.StringValue {
+func stringValue(_ v: String) -> InputValue.StringValue {
   return InputValue.StringValue(value: v)
 }
 
-public func listValue(_ values: InputValue...) -> InputValue.ListValue {
+func listValue(_ values: InputValue...) -> InputValue.ListValue {
   return InputValue.ListValue(items: values)
 }
 
-public func listValue(_ values: [InputValue]) -> InputValue.ListValue {
+func listValue(_ values: [InputValue]) -> InputValue.ListValue {
   return InputValue.ListValue(items: values)
 }
 
-public func objectValue(_ src: (String, InputValue)...) -> InputValue.ObjectValue {
+func objectValue(_ src: (String, InputValue)...) -> InputValue.ObjectValue {
   var res: [String: InputValue] = [:]
   for s in src {
     res[s.0] = s.1
@@ -388,23 +388,23 @@ public func objectValue(_ src: (String, InputValue)...) -> InputValue.ObjectValu
   return InputValue.ObjectValue(fields: res)
 }
 
-public func objectValue(_ src: [String: InputValue]) -> InputValue.ObjectValue {
+func objectValue(_ src: [String: InputValue]) -> InputValue.ObjectValue {
   return InputValue.ObjectValue(fields: src)
 }
 
 
-public func field(_ name: String, _ alias: String, _ type: OutputType) -> Selector.Field {
+func field(_ name: String, _ alias: String, _ type: OutputType) -> Selector.Field {
   return Selector.Field(name: name, alias: alias, arguments:[:], type: type)
 }
 
-public func field(_ name: String, _ alias: String, _ arguments: [String:InputValue], _ type: OutputType) -> Selector.Field {
+func field(_ name: String, _ alias: String, _ arguments: [String:InputValue], _ type: OutputType) -> Selector.Field {
   return Selector.Field(name: name, alias: alias, arguments:arguments, type: type)
 }
 
-public func inline(_ name:String, _ obj: OutputType.Object) -> Selector.TypeCondition {
+func inline(_ name:String, _ obj: OutputType.Object) -> Selector.TypeCondition {
   return Selector.TypeCondition(name: name, type: obj)
 }
 
-public func fragment(_ name:String, _ src: OutputType.Object) -> Selector.Fragment {
+func fragment(_ name:String, _ src: OutputType.Object) -> Selector.Fragment {
   return Selector.Fragment(name: name, type: src)
 }

@@ -14,34 +14,6 @@ protocol PersistenceProvier: class {
   func close()
 }
 
-//class MMKVPersistenceProvider: PersistenceProvier {
-//  private let db: MMKV
-//  init(name: String) {
-//    self.db = MMKV(mmapID: name, mode: MMKVMode.singleProcess)!
-//  }
-//
-//  func close() {
-//    self.db.close()
-//  }
-//
-//  func saveRecords(records: [String: String]) {
-//    for k in records {
-//      self.db.setValue(k.value, forKey: k.key)
-//    }
-//  }
-//
-//  func loadRecords(keys: Set<String>) -> [String: String] {
-//    var res: [String: String] = [:]
-//    for k in keys {
-//      let ex = self.db.string(forKey: k)
-//      if ex != nil {
-//        res[k] = ex
-//      }
-//    }
-//    return res
-//  }
-//}
-
 class EmptyPersistenceProvier: PersistenceProvier {
   func close() {
     
@@ -61,11 +33,6 @@ class SpaceXPersistence {
   private let readerQueue = ManagedDispatchQueue(label: "spacex-persistence-read", concurrent: true)
   
   init(name: String?) {
-//    if name != nil {
-//      self.provider = MMKVPersistenceProvider(name: name!)
-//    } else {
-//      self.provider = EmptyPersistenceProvier()
-//    }
     self.provider = EmptyPersistenceProvier()
   }
   

@@ -66,7 +66,7 @@ fileprivate func selectorKey(value: InputValue, variables: JSON) -> String? {
   fatalError()
 }
 
-public func selectorKey(name: String, arguments: [String: InputValue], variables: JSON) -> String {
+func selectorKey(name: String, arguments: [String: InputValue], variables: JSON) -> String {
   if arguments.count == 0 {
     return name
   }

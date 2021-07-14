@@ -9,12 +9,12 @@
 import Foundation
 import SwiftyJSON
 
-public enum QueryReadResult {
+enum QueryReadResult {
   case success(data: JSON)
   case missing
 }
 
-public enum QueryReadAndWatchResult {
+enum QueryReadAndWatchResult {
   case success(data: JSON)
   case missing
   case updated
@@ -39,7 +39,7 @@ fileprivate class Subscription {
   }
 }
 
-public class SpaceXStore {
+class SpaceXStore {
   private static let ROOT_QUERY = "ROOT_QUERY"
   private let normalizationQueue = ManagedDispatchQueue(label: "spacex-store-normalization")
   private let storeQueue = ManagedDispatchQueue(label: "spacex-store")

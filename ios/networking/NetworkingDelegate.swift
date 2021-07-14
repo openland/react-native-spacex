@@ -1,11 +1,13 @@
 //
 //  NetworkingDelegate.swift
+//  Openland
+//
 //
 
 import Foundation
 import SwiftyJSON
 
-protocol NetworkingDelegate: AnyObject {
+protocol NetworkingDelegate: class {
   
   // Callbacks
   func onResponse(id: String, data: JSON)

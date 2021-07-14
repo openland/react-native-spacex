@@ -8,7 +8,7 @@
 
 import Foundation
 
-public class ChangedRecord {
+class ChangedRecord {
   let key: String
   let fields: Set<String>
   init(key: String, fields: Set<String>) {
@@ -17,7 +17,7 @@ public class ChangedRecord {
   }
 }
 
-public class RecordStore {
+class RecordStore {
   private var inMemory: [String: Record] = [:]
   
   //

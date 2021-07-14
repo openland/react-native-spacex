@@ -1,0 +1,184 @@
+package com.reactnativespacex.impl.transport
+
+import android.content.Context
+import com.reactnativespacex.impl.OperationDefinition
+import com.reactnativespacex.impl.OperationKind
+import com.reactnativespacex.impl.SpaceXMode
+import com.reactnativespacex.impl.utils.DispatchQueue
+import org.json.JSONArray
+import org.json.JSONObject
+import java.util.concurrent.atomic.AtomicInteger
+
+sealed class TransportResult {
+  class Result(val data: JSONObject) : TransportResult()
+  class Error(val error: JSONArray) : TransportResult()
+  object Completed : TransportResult()
+}
+
+private class PendingOperation(
+  val id: String,
+  var requestId: String,
+  val operation: OperationDefinition,
+  val variables: JSONObject,
+  val handler: (TransportResult) -> Unit
+)
+
+class TransportState : NetworkingHandler {
+
+  private val context: Context
+
+  private val url: String
+  private val params: Map<String, String>
+
+  private var networking: NetworkingApollo
+  private var nextId = AtomicInteger(1)
+
+  private val queue = DispatchQueue("ws")
+
+  private var liveOperations = mutableMapOf<String, PendingOperation>()
+  private var liveOperationsIds = mutableMapOf<String, String>()
+  private val statusCallback: (connected: Boolean) -> Unit
+
+  constructor(context: Context, url: String, mode: SpaceXMode, params: Map<String, String>, statusCallback: (connected: Boolean) -> Unit) {
+    this.context = context
+    this.statusCallback = statusCallback
+    this.url = url
+    this.params = params
+    this.networking = NetworkingApollo(context, url, params, this.queue, this)
+    this.networking.connect()
+  }
+
+  fun operation(operation: OperationDefinition, variables: JSONObject, handler: (TransportResult) -> Unit): () -> Unit {
+    val id = nextId.getAndIncrement().toString()
+    val op = PendingOperation(id, id, operation, variables, handler)
+    this.queue.async {
+
+      // Save operation
+      this.liveOperationsIds[id] = id
+      this.liveOperations[id] = op
+
+      // Start operation
+      this.flushQueryStart(op)
+    }
+    return {
+      this.queue.async {
+        if (this.liveOperations.containsKey(id)) {
+
+          // Remove from callbacks
+          this.liveOperations.remove(id)
+          this.liveOperationsIds.remove(op.requestId)
+
+          // Stop Query
+          this.flushQueryStop(op)
+        }
+      }
+    }
+  }
+
+
+  //
+  // Responses
+  //
+
+  override fun onResponse(id: String, data: JSONObject) {
+    val rid = this.liveOperationsIds[id]
+    if (rid != null) {
+      val op = liveOperations[rid]
+      if (op != null) {
+        op.handler(TransportResult.Result(data))
+      }
+    }
+  }
+
+  override fun onError(id: String, data: JSONArray) {
+    val rid = this.liveOperationsIds[id]
+    if (rid != null) {
+      val op = liveOperations[rid]
+      if (op != null) {
+        this.liveOperations.remove(rid)
+        this.liveOperationsIds.remove(id)
+        op.handler(TransportResult.Error(data))
+      }
+    }
+  }
+
+  override fun onCompleted(id: String) {
+    val rid = this.liveOperationsIds[id]
+    if (rid != null) {
+      val op = liveOperations[rid]
+      if (op != null) {
+        this.liveOperations.remove(rid)
+        this.liveOperationsIds.remove(id)
+        op.handler(TransportResult.Completed)
+      }
+    }
+  }
+
+//    override fun onTryAgain(id: String, delay: Int) {
+//        val rid = this.liveOperationsIds[id]
+//        if (rid != null) {
+//            val op = liveOperations[rid]
+//            if (op != null) {
+//
+//                // Stop existing
+//                this.flushQueryStop(op)
+//
+//                // Regenerate ID
+//                val nid = nextId.getAndIncrement().toString()
+//                op.requestId = nid
+//                this.liveOperationsIds.remove(id)
+//                this.liveOperationsIds[nid] = op.id
+//
+//                // Schedule restart
+//                this.queue.asyncDelayed(delay * 1000) {
+//                    if (this.liveOperationsIds.containsKey(nid)) {
+//                        this.flushQueryStart(op)
+//                    }
+//                }
+//            }
+//        }
+//    }
+
+  //
+  // Sessions
+  //
+
+  override fun onSessionRestart() {
+    val copy = this.liveOperations.values.toList()
+    for (op in copy) {
+      if (op.operation.kind == OperationKind.SUBSCRIPTION) {
+
+        // Stop subscriptions
+        op.handler(TransportResult.Completed)
+        this.liveOperations.remove(op.id)
+        this.liveOperationsIds.remove(op.requestId)
+      } else {
+        this.flushQueryStart(op)
+      }
+    }
+  }
+
+  override fun onConnected() {
+    this.statusCallback(true)
+  }
+
+  override fun onDisconnected() {
+    this.statusCallback(false)
+  }
+
+  //
+  // Ops
+  //
+
+  private fun flushQueryStart(operation: PendingOperation) {
+    this.networking.startRequest(operation.requestId, JSONObject(mapOf(
+      "query" to operation.operation.body,
+      "name" to operation.operation.name,
+      "variables" to operation.variables
+    )))
+  }
+
+  private fun flushQueryStop(operation: PendingOperation) {
+    this.networking.stopRequest(operation.requestId)
+  }
+}

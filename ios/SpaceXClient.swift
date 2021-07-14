@@ -9,12 +9,12 @@
 import Foundation
 import SwiftyJSON
 
-public enum SpaceXOperationResult {
+enum SpaceXOperationResult {
   case result(data: JSON)
   case error(error: JSON)
 }
 
-public enum SpaceXReadResult {
+enum SpaceXReadResult {
   case result(data: JSON)
   case missing
 }
@@ -29,7 +29,7 @@ protocol RunningSubscription {
   func close()
 }
 
-public class SpaceXClient {
+class SpaceXClient {
   
   fileprivate var store: SpaceXStore
   fileprivate var transport: SpaceXTransport!
@@ -38,9 +38,9 @@ public class SpaceXClient {
   var onConnected: (() -> Void)?
   var onDisconnected: (() -> Void)?
   
-  init(url: String, mode: String, connectionParams: [String:String], storage: String?) {
+  init(url: String, token: String?, storage: String?) {
     NSLog("[SpaceX-Alloc]: init SpaceXClient")
-    self.transport = SpaceXTransport(url: url, mode: mode, params: connectionParams)
+    self.transport = SpaceXTransport(url: url, params: ["x-openland-token": token])
     self.store = SpaceXStore(name: storage)
     self.connected = self.transport.connected
     self.transport.onConnected = { [weak self] in
