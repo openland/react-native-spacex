@@ -18,46 +18,33 @@ enum TransportSocketState {
   case completed
 }
 
-protocol NetworkingDelegate: AnyObject {
-  
-  // Callbacks
-  func onResponse(id: String, data: JSON)
-  func onError(id: String, error: JSON)
-  func onCompleted(id: String)
-  
-  // Session state
-  func onSessiontRestart()
-  func onConnected()
-  func onDisconnected()
-}
-
-class CommonTransportLayer: WebSocketConnectionDelegate {
+class TransportSocket {
   
   private static var nextId: AtomicInteger = AtomicInteger(value: 1)
   private static let PING_INTERVAL = 30
   private static let PING_TIMEOUT = 10
   
   private let queue = DispatchQueue(label: "spacex-networking-transport")
-    
+  
   let id: Int
   let url: String
   let params: [String: String?]
   weak var delegate: NetworkingDelegate? = nil
   var callbackQueue: DispatchQueue
-  let provider: WebSocketProvider
-  private var connection: WebSocketConnection? = nil
+  // private let reachability: Reachability
+  private var socket: ThrustedSocket? = nil
   private var pending: [String: JSON] = [:]
   private var state: TransportSocketState = .waiting
   private var failuresCount = 0
+  private var reachable = true
   private var started = false
   private var mode: String
   
   private var lastPingId = 0
   
-  init(provider: WebSocketProvider, url: String, mode: String, params: [String: String?]) {
+  init(url: String, mode: String, params: [String: String?]) {
     self.callbackQueue = self.queue
-    self.provider = provider
-    self.id = CommonTransportLayer.nextId.getAndIncrement()
+    self.id = TransportSocket.nextId.getAndIncrement()
     self.url = url
     self.params = params
     self.mode = mode
@@ -67,7 +54,9 @@ class CommonTransportLayer: WebSocketConnectionDelegate {
     NSLog("[SpaceX-WS]: Starting")
     queue.async {
       self.started = true
-      self.doConnect()
+      if self.reachable {
+        self.doConnect()
+      }
     }
   }
   
@@ -124,18 +113,26 @@ class CommonTransportLayer: WebSocketConnectionDelegate {
       fatalError("Unexpected state")
     }
     self.state = .connecting
-    
-    // Create new connection
-    var proto: String? = nil
-    if (self.mode != "openland") {
-        proto = "graphql-ws"
+    let ws = ThrustedSocket(url: self.url, mode: self.mode, timeout: 5000, queue: self.queue)
+    ws.onConnect = {
+      if self.socket === ws {
+        self.onConnected()
+      }
     }
-    let ws = self.provider.create(endpoint: WebSocketEndpoint(url: self.url, proto: proto), queue: self.queue)
-    ws.delegate = self
-    self.connection = ws
+    ws.onDisconnect = {
+      if self.socket === ws {
+        self.onDisconnected()
+      }
+    }
+    ws.onText = { text in
+      if self.socket === ws {
+        self.onReceived(message: text)
+      }
+    }
+    self.socket = ws
   }
-    
-  func onOpen() {
+  
+  private func onConnected() {
     NSLog("[SpaceX-WS]: onConnected")
     if self.state != .connecting {
       fatalError("Unexpected state")
@@ -155,8 +152,31 @@ class CommonTransportLayer: WebSocketConnectionDelegate {
     }
     schedulePing()
   }
+  
+  private func schedulePing() {
+    if self.mode != "openland" {
+      return
+    }
+    NSLog("[SpaceX-WS]: schedule ping")
+    self.lastPingId += 1
+    let pingId = self.lastPingId
+    self.queue.asyncAfter(deadline: .now() + .seconds(TransportSocket.PING_INTERVAL)) {
+      if (self.state == .started) {
+        NSLog("[SpaceX-WS]: sending ping")
+        self.writeToSocket(msg: JSON(["type": "ping"]))
+        self.queue.asyncAfter(deadline: .now() + .seconds(TransportSocket.PING_TIMEOUT)) {
+          if(self.state == .started && self.lastPingId == pingId) {
+            NSLog("[SpaceX-WS]: ping timeout")
+            self.onDisconnected()
+          }
+        }
+      }
+    }
+  }
+  
+  private func onReceived(message: String) {
+    // print("[SpaceX-Apollo]: << " + message)
     
-  func onMessage(message: String) {
     let parsed = JSON(parseJSON: message)
     let type = parsed["type"].stringValue
     NSLog("[SpaceX-WS]: <<" + type)
@@ -217,8 +237,22 @@ class CommonTransportLayer: WebSocketConnectionDelegate {
       }
     }
   }
-    
-  func onClose() {
+  
+  private func onReachable() {
+    self.reachable = true
+    if self.started && (self.state == .waiting || self.state == .connecting) {
+      self.stopClient()
+      self.state = .waiting
+      self.failuresCount = 0
+      self.doConnect()
+    }
+  }
+  
+  private func onUnreachable() {
+    self.reachable = false
+  }
+  
+  private func onDisconnected() {
     NSLog("[SpaceX-WS]: onDisconnected")
     if self.state == .started {
       self.callbackQueue.async {
@@ -231,28 +265,8 @@ class CommonTransportLayer: WebSocketConnectionDelegate {
     self.failuresCount += 1
     
     
-    self.doConnect()
-  }
-  
-  
-  private func schedulePing() {
-    if self.mode != "openland" {
-      return
-    }
-    NSLog("[SpaceX-WS]: schedule ping")
-    self.lastPingId += 1
-    let pingId = self.lastPingId
-    self.queue.asyncAfter(deadline: .now() + .seconds(CommonTransportLayer.PING_INTERVAL)) {
-      if (self.state == .started) {
-        NSLog("[SpaceX-WS]: sending ping")
-        self.writeToSocket(msg: JSON(["type": "ping"]))
-        self.queue.asyncAfter(deadline: .now() + .seconds(CommonTransportLayer.PING_TIMEOUT)) {
-          if(self.state == .started && self.lastPingId == pingId) {
-            NSLog("[SpaceX-WS]: ping timeout")
-            self.onClose()
-          }
-        }
-      }
+    if self.reachable {
+      self.doConnect()
     }
   }
   
@@ -276,17 +290,20 @@ class CommonTransportLayer: WebSocketConnectionDelegate {
   
   private func stopClient() {
     // Removing client if present
-    let ws = self.connection
-    self.connection = nil
+    let ws = self.socket
+    self.socket = nil
     
     // Stopping client
-    ws?.delegate = nil
+    ws?.onText = nil
+    ws?.onConnect = nil
+    ws?.onDisconnect = nil
     ws?.close()
   }
   
   private func writeToSocket(msg: JSON) {
     let txt = serializeJson(json: msg)
     NSLog("[SpaceX-WS]: >>" + msg["type"].stringValue)
-    self.connection!.send(message: txt)
+    // print("[SpaceX-Apollo]: >> \(txt)")
+    self.socket!.send(msg: txt)
   }
 }

@@ -48,7 +48,7 @@ class WatchDogTimer {
   
   func kill() {
     self.isDead = true
-    self.timerId = self.nextTimer
-    self.nextTimer += 1
+     self.timerId = self.nextTimer
+      self.nextTimer += 1
   }
 }

@@ -24,6 +24,31 @@ class WrappedWebSocket: WebSocketDelegate {
         self.ws = ws
         self.queue = queue
         ws.delegate = self
+//
+//    ws.onConnect = {
+//      self.queue.async {
+//        let t = self.onConnect
+//        if t != nil {
+//          t!()
+//        }
+//      }
+//    }
+//    ws.onDisconnect = { err in
+//      self.queue.async {
+//        let t = self.onDisconnect
+//        if t != nil {
+//          t!(err)
+//        }
+//      }
+//    }
+//    ws.onText = { str in
+//      self.queue.async {
+//        let t = self.onText
+//        if t != nil {
+//          t!(str)
+//        }
+//      }
+//    }
         ws.connect()
     }
     
