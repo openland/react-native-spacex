@@ -54,7 +54,7 @@ public class RNGraphqlClient {
   init(key: String, descriptor: String, endpoint: String, connectionParams: [String: String], storage: String?, mode: String, module: RNGraphQL) {
     self.module = module
     self.key = key
-    self.descriptor = SpaceXOperationDescriptor(raw: JSON(parseJSON: descriptor))
+    self.descriptor = SpaceXOperationDescriptor(raw: descriptor)
     self.client = SpaceXClient(url: endpoint, mode: mode, connectionParams: connectionParams, storage: storage)
     self.client.onConnected = { [weak self] in
       if let s = self {
