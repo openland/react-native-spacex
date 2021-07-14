@@ -30,7 +30,7 @@ class TransportState : NetworkingHandler {
   private val url: String
   private val params: Map<String, String>
 
-  private var networking: NetworkingApollo
+  private var networking: CommonTransportLayer
   private var nextId = AtomicInteger(1)
 
   private val queue = DispatchQueue("ws")
@@ -44,7 +44,7 @@ class TransportState : NetworkingHandler {
     this.statusCallback = statusCallback
     this.url = url
     this.params = params
-    this.networking = NetworkingApollo(context, url, params, this.queue, this)
+    this.networking = CommonTransportLayer(context, url, params, mode, this.queue, this)
     this.networking.connect()
   }
 
