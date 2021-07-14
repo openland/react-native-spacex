@@ -271,7 +271,7 @@ class SpacexModule(reactContext: ReactApplicationContext) : ReactContextBaseJava
   }
 
   @ReactMethod
-  fun createClient(key: String, endpoint: String, descriptor: String, params: ReadableMap, storage: String?, mode: String) {
+  fun createClient(key: String, descriptor: String, endpoint: String, params: ReadableMap, storage: String?, mode: String) {
     Log.d("SpaceX", "createClient")
     if (this.clients.containsKey(key)) {
       throw Error("Client with key $key already exists")
